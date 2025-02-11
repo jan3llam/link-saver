@@ -8,14 +8,17 @@ use Illuminate\Support\Facades\Log;
 
 class EmailService {
 
-    public function __construct(private LinkService $linkService) {}
+    public function __construct(
+        private LinkService $linkService
+        ) {}
 
     /**
      * Process unread emails, extract URLs, and save metadata.
      *
      * @return void
      */
-    public function processInbox(): void {
+    public function processInbox(): void
+    {
         try {
             Log::info("Connecting to email account...");
 

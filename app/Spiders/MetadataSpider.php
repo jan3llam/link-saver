@@ -18,7 +18,6 @@ class MetadataSpider extends BasicSpider
         RequestDeduplicationMiddleware::class,
     ];
 
-
     public array $extensions = [
         LoggerExtension::class,
         StatsCollectorExtension::class,

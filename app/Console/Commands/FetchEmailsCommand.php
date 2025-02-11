@@ -4,7 +4,6 @@ namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
 use App\Services\EmailService;
-use Illuminate\Support\Facades\Log;
 
 class FetchEmailsCommand extends Command
 {

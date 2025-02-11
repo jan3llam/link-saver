@@ -47,7 +47,8 @@ class LinkController extends Controller {
     /**
      * Retrieve all saved links for a specific email
      */
-    public function getUserLinks(Request $request): JsonResponse {
+    public function getUserLinks(Request $request): JsonResponse
+    {
         try {
             $validator = Validator::make($request->query(), [
                 'email' => 'required|email',

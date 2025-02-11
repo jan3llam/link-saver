@@ -52,7 +52,8 @@ class LinkService {
      *
      * @return \Illuminate\Database\Eloquent\Collection
      */
-    public function userLinks(?string $userEmail):Collection {
+    public function userLinks(?string $userEmail): Collection
+    {
 
         $query = Link::orderBy('created_at', 'desc');
 
