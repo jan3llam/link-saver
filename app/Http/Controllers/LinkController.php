@@ -26,12 +26,19 @@ class LinkController extends Controller {
      */
     public function fetchMail(): JsonResponse {
         try {
-            $this->emailService->processInbox();
+            $response = $this->emailService->processInbox();
+
+            if ($response->getStatusCode() === 200) {
+                return response()->json([
+                    'message' => 'Emails fetched successfully',
+                    'data' => $response->getData(),
+                ], 200);
+            }
 
             return response()->json([
-                'message' => 'Emails fetched successfully',
-                'data' => null,
-            ], 200);
+                'message' => 'Failed to fetch emails',
+                'error' => $response->getData(),
+            ], $response->getStatusCode());
 
         } catch (\Exception $e) {
             Log::error('Error fetching emails: ' . $e->getMessage());

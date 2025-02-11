@@ -4,6 +4,7 @@ namespace App\Services;
 
 use Webklex\IMAP\Facades\Client;
 use App\Services\LinkService;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Log;
 
 class EmailService {
@@ -15,9 +16,9 @@ class EmailService {
     /**
      * Process unread emails, extract URLs, and save metadata.
      *
-     * @return void
+     * @return JsonResponse
      */
-    public function processInbox(): void
+    public function processInbox(): JsonResponse
     {
         try {
             Log::info("Connecting to email account...");
@@ -31,7 +32,7 @@ class EmailService {
             foreach ($inbox->messages()->unseen()->get() as $message) {
                 $content = $message->getTextBody();
 
-                preg_match_all('/https?:\/\/[^\s]+/', $content, $matches);
+                preg_match_all('/https:\/\/[^\s]+/i', $content, $matches);
                 $urls = array_unique($matches[0] ?? []);
 
                 if ($urls) {
@@ -45,11 +46,6 @@ class EmailService {
                             continue;
                         }
 
-                        $parsedUrl = parse_url($url);
-                        if (!isset($parsedUrl['scheme']) || !in_array($parsedUrl['scheme'], ['http', 'https'])) {
-                            Log::warning("Unsafe URL scheme detected and skipped: {$url}");
-                            continue;
-                        }
 
                         $sender = filter_var($message->getFrom()[0]->mail ?? 'Unknown Sender', FILTER_SANITIZE_EMAIL);
                         $subject = substr($message->getSubject(), 0, 255);
@@ -68,8 +64,19 @@ class EmailService {
             }
 
             Log::info("Inbox processing completed.");
+
+            return response()->json([
+                'message' => 'Inbox processed successfully',
+                'data' => null
+            ], 200);
+
         } catch (\Exception $e) {
             Log::error("Error processing inbox: " . $e->getMessage());
+
+            return response()->json([
+                'message' => $e->getMessage(),
+                'data' => null
+            ], 500);
         }
     }
 
